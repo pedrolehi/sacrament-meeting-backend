@@ -8,20 +8,23 @@ datasource db {
 }
 
 model Ward {
-  id    String @id @default(uuid())
-  name  String
-  stake String
-  users User[]
+  id     String   @id @default(uuid())
+  name   String
+  stake  String
+  users  User[]
+  agenda Agenda[]
 
+  @@unique([name, stake])
   @@map("wards")
 }
 
 model User {
-  id    String  @id @default(uuid())
-  name  String
-  email String
-  phone String
-  role  String?
+  id       String  @id @default(uuid())
+  name     String
+  email    String
+  phone    String
+  role     String?
+  password String
 
   ward   Ward   @relation(fields: [wardId], references: [id], onDelete: Cascade)
   wardId String
@@ -46,6 +49,9 @@ model Agenda {
   speakers            String?
   hymns               String?
   testimonies         String?
+
+  ward   Ward   @relation(fields: [wardId], references: [id])
+  wardId String
 
   @@map("agendas")
 }
