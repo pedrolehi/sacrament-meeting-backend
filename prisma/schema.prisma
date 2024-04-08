@@ -1,0 +1,51 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Ward {
+  id    String @id @default(uuid())
+  name  String
+  stake String
+  users User[]
+
+  @@map("wards")
+}
+
+model User {
+  id    String  @id @default(uuid())
+  name  String
+  email String
+  phone String
+  role  String?
+
+  ward   Ward   @relation(fields: [wardId], references: [id], onDelete: Cascade)
+  wardId String
+
+  @@unique([wardId, email])
+  @@unique([wardId, role])
+  @@map("users")
+}
+
+model Agenda {
+  id                  String   @id @default(uuid())
+  date                DateTime
+  attendants          Int
+  presiding_authority String
+  conductor           String?
+  regent              String?
+  organist            String?
+  announciments       String?
+  ordinances          String?
+  callings            String?
+  typeOfMeeting       String   @map("type_of_meeting")
+  speakers            String?
+  hymns               String?
+  testimonies         String?
+
+  @@map("agendas")
+}
