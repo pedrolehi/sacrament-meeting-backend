@@ -6,6 +6,6 @@ POST http://localhost:3333/wards
 Content-Type: application/json
 
 {
-  "name": "Itaquaquecetuba",
-  "stake": "Itaquaquecetuba"
+  "name": "Penha",
+  "stake": "Penha"
 }

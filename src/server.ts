@@ -1,12 +1,15 @@
 import fastify from "fastify";
+import {
+  serializerCompiler,
+  validatorCompiler,
+} from "fastify-type-provider-zod";
+
 import { createWard, getWards } from "./api/routes/ward.routes";
 
 const app = fastify();
 const port = 3333;
-
-app.get("/", (request, reply) => {
-  reply.send({ hello: "world" });
-});
+app.setValidatorCompiler(validatorCompiler);
+app.setSerializerCompiler(serializerCompiler);
 
 app.register(createWard);
 app.register(getWards);

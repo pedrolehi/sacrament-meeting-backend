@@ -1,8 +1,9 @@
 import { prisma } from "../../lib/prisma";
-import { Ward, WardQuery } from "../interfaces/Ward.Interface";
+import { QueryType } from "../schemas/QuerySchema";
+import { WardType } from "../schemas/WardSchema";
 
 export const wardService = {
-  createWard: async function (wardData: Ward) {
+  createWard: async function (wardData: WardType) {
     const { name, stake } = wardData;
 
     const notUniqueWard = await prisma.ward.findUnique({
@@ -21,7 +22,7 @@ export const wardService = {
     }
   },
 
-  getWards: async function ({ pageIndex }: WardQuery) {
+  getWards: async function ({ pageIndex }: QueryType) {
     const index: number = Number(pageIndex ?? "0");
 
     const allWards = await prisma.ward.findMany({

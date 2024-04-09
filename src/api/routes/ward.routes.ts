@@ -3,6 +3,7 @@ import { wardController } from "../controllers/wardController";
 import { FastifyInstance } from "fastify";
 import { WardSchema } from "../schemas/WardSchema";
 import { z } from "zod";
+import { QuerySchema } from "../schemas/QuerySchema";
 
 // POST /wards;
 export async function createWard(app: FastifyInstance) {
@@ -12,7 +13,7 @@ export async function createWard(app: FastifyInstance) {
       schema: {
         summary: "Creates a ward on db",
         tags: ["wards"],
-        body: z.object({}),
+        body: WardSchema,
         response: {},
       },
     },
@@ -30,7 +31,7 @@ export async function getWards(app: FastifyInstance) {
       schema: {
         summary: "Gets all wards on db",
         tags: ["wards"],
-        // querystring: QuerySchema,
+        querystring: QuerySchema,
         response: {},
       },
     },

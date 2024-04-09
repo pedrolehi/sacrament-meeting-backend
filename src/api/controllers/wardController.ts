@@ -1,13 +1,13 @@
+import { WardSchema, WardType } from "./../schemas/WardSchema";
 import { FastifyRequest, FastifyReply } from "fastify";
 import { wardService } from "../services/WardService";
-import { Ward, WardQuery } from "../interfaces/Ward.Interface";
-import { WardSchema } from "../schemas/WardSchema";
+import { QueryType } from "../schemas/QuerySchema";
 
 export const wardController = {
   //POST /wards
   createWard: async (request: FastifyRequest, reply: FastifyReply) => {
     try {
-      const wardData = request.body as Ward;
+      const wardData = request.body as WardType;
 
       // Validates if wardData is !== than type WardType and if it is, thows an error.
       const validatedData = WardSchema.safeParse(wardData);
@@ -28,7 +28,7 @@ export const wardController = {
   // GET /wards
   getWards: async (request: FastifyRequest, reply: FastifyReply) => {
     try {
-      const { pageIndex } = request.query as WardQuery;
+      const { pageIndex } = request.query as QueryType;
 
       const allWards = await wardService.getWards({ pageIndex });
 
