@@ -1,9 +1,8 @@
-import { request } from "http";
 import { prisma } from "../../lib/prisma";
-import { WardType } from "../schemas/WardSchema";
+import { Ward, WardQuery } from "../interfaces/Ward.Interface";
 
 export const wardService = {
-  createWard: async function (wardData: WardType) {
+  createWard: async function (wardData: Ward) {
     const { name, stake } = wardData;
 
     const notUniqueWard = await prisma.ward.findUnique({
@@ -20,5 +19,34 @@ export const wardService = {
     } catch (error: any) {
       throw new Error(`Failed to create user: ${error.message}`);
     }
+  },
+
+  getWards: async function ({ pageIndex }: WardQuery) {
+    const index: number = Number(pageIndex ?? "0");
+
+    const allWards = await prisma.ward.findMany({
+      select: {
+        id: true,
+        name: true,
+        stake: true,
+        users: { select: { id: true, name: true, role: true } },
+      },
+      take: 10,
+      skip: index * 10,
+      orderBy: { name: "asc" },
+    });
+
+    return {
+      allWards: allWards.map((ward) => {
+        return {
+          id: ward.id,
+          name: ward.name,
+          stake: ward.stake,
+          users: ward.users?.map((user) => {
+            user.id, user.name, user.role;
+          }),
+        };
+      }),
+    };
   },
 };

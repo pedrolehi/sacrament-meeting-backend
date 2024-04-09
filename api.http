@@ -1,4 +1,4 @@
-GET http://localhost:3333/
+GET http://localhost:3333/wards?query=
 Content-Type: application/json
 
 ###
@@ -6,6 +6,6 @@ POST http://localhost:3333/wards
 Content-Type: application/json
 
 {
-  "name": "Caiuby",
+  "name": "Itaquaquecetuba",
   "stake": "Itaquaquecetuba"
 }
