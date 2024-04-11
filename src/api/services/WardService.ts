@@ -1,6 +1,6 @@
+import { WardType, WardIdType, WardUpdateType } from "./../schemas/WardSchema";
 import { prisma } from "../../lib/prisma";
 import { QueryType } from "../schemas/QuerySchema";
-import { WardType } from "../schemas/WardSchema";
 
 export const wardService = {
   createWard: async function (wardData: WardType) {
@@ -49,5 +49,48 @@ export const wardService = {
         };
       }),
     };
+  },
+
+  getWardById: async function ({ wardId }: WardIdType) {
+    if (typeof wardId !== "string" || null) {
+      throw new Error(`ID type is not a string or null.`);
+    }
+
+    const ward = await prisma.ward.findUnique({
+      where: { id: wardId },
+      select: {
+        id: true,
+        name: true,
+        stake: true,
+        users: { select: { id: true, name: true, role: true } },
+      },
+    });
+
+    return ward;
+  },
+
+  updateWard: async function ({ wardId }: WardIdType, data: WardUpdateType) {
+    if (typeof wardId !== "string" && wardId !== null) {
+      throw new Error(`ID type is not a string or null.`);
+    }
+
+    const existingWard = await prisma.ward.findUnique({
+      where: { id: wardId },
+    });
+
+    if (!existingWard) {
+      throw new Error(`Ward not found`);
+    }
+
+    const newWard = await prisma.ward.update({
+      where: { id: wardId },
+      data: {
+        name: data.name || undefined,
+        stake: data.stake || undefined,
+      },
+      select: { id: true, name: true, stake: true },
+    });
+
+    return newWard;
   },
 };

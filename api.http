@@ -1,11 +1,27 @@
-GET http://localhost:3333/wards?query=
-Content-Type: application/json
-
-###
+# CREATE WARD
 POST http://localhost:3333/wards
 Content-Type: application/json
 
 {
   "name": "Penha",
   "stake": "Penha"
+}
+
+###
+# GET ALL WARDS
+GET http://localhost:3333/wards
+Content-Type: application/json
+
+###
+#GET WARD BY ID
+GET http://localhost:3333/wards/7de66727-79a8-4902-a618-f74a37c6411c
+Content-Type: application/json
+
+###
+#PUT WARD BY ID
+PUT http://localhost:3333/wards/7de66727-79a8-4902-a618-f74a37c6411c
+Content-Type: application/json
+
+{
+  "name": "Vila Esperança",
 }
