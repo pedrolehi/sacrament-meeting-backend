@@ -1,31 +1,28 @@
-import {
-  WardIdType,
-  WardSchema,
-  WardType,
-  WardUpdateType,
-} from "./../schemas/WardSchema";
+import { WardSchema, WardType } from "../schemas/Ward.schema";
 import { FastifyRequest, FastifyReply } from "fastify";
 import { wardService } from "../services/WardService";
-import { QueryType } from "../schemas/QuerySchema";
-import { prisma } from "../../lib/prisma";
+import { QueryType } from "../schemas/Query.schema";
 
 export const wardController = {
   //POST /wards
   createWard: async (request: FastifyRequest, reply: FastifyReply) => {
     try {
-      const wardData = request.body as WardType;
+      const { name, stake } = request.body as Pick<WardType, "name" | "stake">;
 
       // Validates if wardData is !== than type WardType and if it is, thows an error.
-      const validatedData = WardSchema.safeParse(wardData);
+      const validatedData = WardSchema.pick({
+        name: true,
+        stake: true,
+      }).safeParse({ name, stake });
       if (!validatedData.success) {
         throw new Error(
           `wardData does not match WardType: ${validatedData.error.message}`
         );
       }
 
-      const newWard = await wardService.createWard(wardData);
+      const newWard = await wardService.createWard({ name, stake });
 
-      return reply.status(201).send({ wardId: newWard.id });
+      return reply.status(201).send({ id: newWard.id });
     } catch (error: any) {
       reply.code(500).send({ error: error.message });
     }
@@ -47,9 +44,9 @@ export const wardController = {
   //GET /wards/:id
   getWardById: async (request: FastifyRequest, reply: FastifyReply) => {
     try {
-      const { wardId } = request.params as WardIdType;
+      const { id } = request.params as Pick<WardType, "id">;
 
-      const ward = await wardService.getWardById({ wardId });
+      const ward = await wardService.getWardById({ id });
 
       return reply.send({ ward });
     } catch (error: any) {
@@ -60,21 +57,18 @@ export const wardController = {
   //PUT /wards/:id
   updateWard: async (request: FastifyRequest, reply: FastifyReply) => {
     try {
-      const { wardId } = request.params as WardIdType;
-      const { name, stake } = request.body as WardUpdateType;
+      const { id } = request.params as Pick<WardType, "id">;
+      const { name, stake } = request.body as Partial<WardType>;
 
-      const updatedFields: WardUpdateType = {};
+      const updatedFields: Pick<WardType, "id"> & Partial<WardType> = {
+        id,
+        name,
+        stake,
+      };
 
-      if (name !== undefined) {
-        updatedFields.name = name;
-      }
-      if (stake !== undefined) {
-        updatedFields.stake = stake;
-      }
+      const updateResponse = await wardService.updateWard(updatedFields);
 
-      const newWard = await wardService.updateWard({ wardId }, updatedFields);
-
-      return reply.send({ newWard });
+      return reply.send({ updateResponse });
     } catch (error: any) {
       throw new Error(`Error to update data: ${error.message}`);
     }

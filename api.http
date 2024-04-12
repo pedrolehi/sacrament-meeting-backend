@@ -23,5 +23,5 @@ PUT http://localhost:3333/wards/7de66727-79a8-4902-a618-f74a37c6411c
 Content-Type: application/json
 
 {
-  "name": "Vila Esperança",
+  "name": "Vila Esperança"
 }

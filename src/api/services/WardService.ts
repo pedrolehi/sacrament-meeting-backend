@@ -1,11 +1,12 @@
-import { WardType, WardIdType, WardUpdateType } from "./../schemas/WardSchema";
+import { WardType } from "../schemas/Ward.schema";
 import { prisma } from "../../lib/prisma";
-import { QueryType } from "../schemas/QuerySchema";
+import { QueryType } from "../schemas/Query.schema";
 
 export const wardService = {
-  createWard: async function (wardData: WardType) {
-    const { name, stake } = wardData;
-
+  createWard: async function ({
+    name,
+    stake,
+  }: Pick<WardType, "name" | "stake">) {
     const notUniqueWard = await prisma.ward.findUnique({
       where: { name_stake: { name, stake } },
     });
@@ -15,7 +16,8 @@ export const wardService = {
     }
 
     try {
-      const newWard = await prisma.ward.create({ data: wardData });
+      const newWard = await prisma.ward.create({ data: { name, stake } });
+
       return newWard;
     } catch (error: any) {
       throw new Error(`Failed to create user: ${error.message}`);
@@ -37,27 +39,25 @@ export const wardService = {
       orderBy: { name: "asc" },
     });
 
-    return {
-      allWards: allWards.map((ward) => {
-        return {
-          id: ward.id,
-          name: ward.name,
-          stake: ward.stake,
-          users: ward.users?.map((user) => {
-            user.id, user.name, user.role;
-          }),
-        };
-      }),
-    };
+    return allWards.map((ward) => {
+      return {
+        id: ward.id,
+        name: ward.name,
+        stake: ward.stake,
+        users: ward.users?.map((user) => {
+          user.id, user.name, user.role;
+        }),
+      };
+    });
   },
 
-  getWardById: async function ({ wardId }: WardIdType) {
-    if (typeof wardId !== "string" || null) {
+  getWardById: async function ({ id }: Partial<WardType>) {
+    if (typeof id !== "string" || null) {
       throw new Error(`ID type is not a string or null.`);
     }
 
     const ward = await prisma.ward.findUnique({
-      where: { id: wardId },
+      where: { id: id },
       select: {
         id: true,
         name: true,
@@ -69,13 +69,14 @@ export const wardService = {
     return ward;
   },
 
-  updateWard: async function ({ wardId }: WardIdType, data: WardUpdateType) {
-    if (typeof wardId !== "string" && wardId !== null) {
+  updateWard: async function ({ id, name, stake }: Partial<WardType>) {
+    if (typeof id !== "string" && id !== null) {
       throw new Error(`ID type is not a string or null.`);
     }
 
     const existingWard = await prisma.ward.findUnique({
-      where: { id: wardId },
+      where: { id: id },
+      select: { name: true, stake: true },
     });
 
     if (!existingWard) {
@@ -83,14 +84,14 @@ export const wardService = {
     }
 
     const newWard = await prisma.ward.update({
-      where: { id: wardId },
+      where: { id: id },
       data: {
-        name: data.name || undefined,
-        stake: data.stake || undefined,
+        name: name || undefined,
+        stake: stake || undefined,
       },
-      select: { id: true, name: true, stake: true },
+      select: { name: true, stake: true },
     });
 
-    return newWard;
+    return { beforeUpdate: existingWard, updated: newWard };
   },
 };
