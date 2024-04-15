@@ -11,6 +11,7 @@ import {
   getWards,
   updateWard,
 } from "./api/routes/ward.router";
+import { registerUser } from "./api/routes/user.router";
 
 const app = fastify();
 const port = 3333;
@@ -22,6 +23,8 @@ app.register(getWards);
 app.register(getWardById);
 app.register(updateWard);
 app.register(deleteWard);
+
+app.register(registerUser);
 
 app.listen({ port: port, host: "0.0.0.0" }).then(() => {
   console.log(`HTTP Server Running at ${port} `);

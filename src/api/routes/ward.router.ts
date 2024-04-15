@@ -1,5 +1,5 @@
 import { ZodTypeProvider } from "fastify-type-provider-zod";
-import { wardController } from "../controllers/wardController";
+import { wardController } from "../controllers/ward.controller";
 import { FastifyInstance } from "fastify";
 import { WardSchema } from "../schemas/Ward.schema";
 import { z } from "zod";
@@ -33,7 +33,7 @@ export async function getWards(app: FastifyInstance) {
         summary: "Gets all wards on db",
         tags: ["wards"],
         querystring: QuerySchema,
-        response: { 200: z.object({ allWards: z.array(WardSchema) }) },
+        // response: { 200: z.object({ allWards: z.array(WardSchema) }) },
       },
     },
     async (request, reply) => {
@@ -51,7 +51,9 @@ export async function getWardById(app: FastifyInstance) {
         summary: "Gets a ward by its ID on db",
         tags: ["wards"],
         params: WardSchema.pick({ id: true }),
-        response: { 200: z.object({ ward: WardSchema }) },
+        response: {
+          // 200: z.object({ ward: WardSchema }),
+        },
       },
     },
     async (request, reply) => {

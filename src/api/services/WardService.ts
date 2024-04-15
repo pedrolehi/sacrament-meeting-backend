@@ -32,7 +32,7 @@ export const wardService = {
         id: true,
         name: true,
         stake: true,
-        users: { select: { id: true, name: true, role: true } },
+        _count: { select: { users: true } },
       },
       take: 10,
       skip: index * 10,
@@ -44,9 +44,7 @@ export const wardService = {
         id: ward.id,
         name: ward.name,
         stake: ward.stake,
-        users: ward.users?.map((user) => {
-          user.id, user.name, user.role;
-        }),
+        users: ward._count.users,
       };
     });
   },
