@@ -51,22 +51,26 @@ export const wardService = {
     });
   },
 
-  getWardById: async function ({ id }: Partial<WardType>) {
+  getWardById: async function ({ id }: Pick<WardType, "id">) {
     if (typeof id !== "string" || null) {
       throw new Error(`ID type is not a string or null.`);
     }
 
-    const ward = await prisma.ward.findUnique({
-      where: { id: id },
-      select: {
-        id: true,
-        name: true,
-        stake: true,
-        users: { select: { id: true, name: true, role: true } },
-      },
-    });
+    try {
+      const ward = await prisma.ward.findUnique({
+        where: { id: id },
+        select: {
+          id: true,
+          name: true,
+          stake: true,
+          users: { select: { id: true, name: true, role: true } },
+        },
+      });
 
-    return ward;
+      return ward;
+    } catch (error: any) {
+      throw new Error(`Failed to find ward: ${error.message}`);
+    }
   },
 
   updateWard: async function ({ id, name, stake }: Partial<WardType>) {
@@ -74,24 +78,42 @@ export const wardService = {
       throw new Error(`ID type is not a string or null.`);
     }
 
-    const existingWard = await prisma.ward.findUnique({
-      where: { id: id },
-      select: { name: true, stake: true },
-    });
+    try {
+      const existingWard = await prisma.ward.findUnique({
+        where: { id: id },
+        select: { name: true, stake: true },
+      });
 
-    if (!existingWard) {
-      throw new Error(`Ward not found`);
+      if (!existingWard) {
+        throw new Error(`Ward not found`);
+      }
+
+      const newWard = await prisma.ward.update({
+        where: { id: id },
+        data: {
+          name: name || undefined,
+          stake: stake || undefined,
+        },
+        select: { name: true, stake: true },
+      });
+
+      return { beforeUpdate: existingWard, updated: newWard };
+    } catch (error: any) {
+      throw new Error(`Failed to update ward: ${error.message}`);
+    }
+  },
+
+  deleteWard: async function ({ id }: Pick<WardType, "id">) {
+    if (typeof id !== "string" || null) {
+      throw new Error(`ID type is not a string or null.`);
     }
 
-    const newWard = await prisma.ward.update({
-      where: { id: id },
-      data: {
-        name: name || undefined,
-        stake: stake || undefined,
-      },
-      select: { name: true, stake: true },
-    });
+    try {
+      const deletedWard = await prisma.ward.delete({ where: { id } });
 
-    return { beforeUpdate: existingWard, updated: newWard };
+      return deletedWard;
+    } catch (error: any) {
+      throw new Error(`Failed to delete ward: ${error.message}`);
+    }
   },
 };

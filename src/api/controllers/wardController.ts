@@ -73,4 +73,17 @@ export const wardController = {
       throw new Error(`Error to update data: ${error.message}`);
     }
   },
+
+  //GET /wards/:id
+  deleteWard: async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+      const { id } = request.params as Pick<WardType, "id">;
+
+      const deletedWard = await wardService.deleteWard({ id });
+
+      return reply.send({ deletedWard });
+    } catch (error: any) {
+      throw new Error(`Error to delete ward: ${error.message}`);
+    }
+  },
 };

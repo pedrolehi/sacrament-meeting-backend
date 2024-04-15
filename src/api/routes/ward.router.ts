@@ -2,7 +2,7 @@ import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { wardController } from "../controllers/wardController";
 import { FastifyInstance } from "fastify";
 import { WardSchema } from "../schemas/Ward.schema";
-import { nan, z } from "zod";
+import { z } from "zod";
 import { QuerySchema } from "../schemas/Query.schema";
 
 // POST /wards;
@@ -92,6 +92,24 @@ export async function updateWard(app: FastifyInstance) {
       console.log(request.params.id);
 
       await wardController.updateWard(request, reply);
+    }
+  );
+}
+
+// DELETE /wards/:id
+export async function deleteWard(app: FastifyInstance) {
+  app.withTypeProvider<ZodTypeProvider>().delete(
+    "/wards/:id",
+    {
+      schema: {
+        summary: "Gets a ward by its ID on db",
+        tags: ["wards"],
+        params: WardSchema.pick({ id: true }),
+        response: { 200: z.object({ deletedWard: WardSchema }) },
+      },
+    },
+    async (request, reply) => {
+      await wardController.deleteWard(request, reply);
     }
   );
 }
