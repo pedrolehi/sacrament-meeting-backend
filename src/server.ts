@@ -11,7 +11,7 @@ import {
   getWards,
   updateWard,
 } from "./api/routes/ward.router";
-import { registerUser } from "./api/routes/user.router";
+import { registerUser } from "./api/routes/auth.router";
 
 const app = fastify();
 const port = 3333;

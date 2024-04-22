@@ -3,11 +3,12 @@ import { FastifyInstance } from "fastify";
 import { UserSchema } from "../schemas/User.schema";
 import { z } from "zod";
 import { userController } from "../controllers/user.controller";
+import { authController } from "../controllers/auth.controller";
 
 // POST /users;
 export async function registerUser(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(
-    "/users",
+    "/auth/register",
     {
       schema: {
         summary: "Creates an user on db",
@@ -17,7 +18,7 @@ export async function registerUser(app: FastifyInstance) {
       },
     },
     async (request, reply) => {
-      await userController.register(request, reply);
+      await authController.register(request, reply);
     }
   );
 }

@@ -1,8 +1,9 @@
+import { UserSchema } from "./../schemas/User.schema";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { wardController } from "../controllers/ward.controller";
 import { FastifyInstance } from "fastify";
 import { WardSchema } from "../schemas/Ward.schema";
-import { z } from "zod";
+import { string, z } from "zod";
 import { QuerySchema } from "../schemas/Query.schema";
 
 // POST /wards;
@@ -52,7 +53,9 @@ export async function getWardById(app: FastifyInstance) {
         tags: ["wards"],
         params: WardSchema.pick({ id: true }),
         response: {
-          // 200: z.object({ ward: WardSchema }),
+          // 200: z.object({
+          //   ward: WardSchema,
+          // }),
         },
       },
     },

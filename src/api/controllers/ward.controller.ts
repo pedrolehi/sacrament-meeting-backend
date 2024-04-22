@@ -1,6 +1,6 @@
 import { WardSchema, WardType } from "../schemas/Ward.schema";
 import { FastifyRequest, FastifyReply } from "fastify";
-import { wardService } from "../services/WardService";
+import { wardService } from "../services/wardService";
 import { QueryType } from "../schemas/Query.schema";
 
 export const wardController = {
