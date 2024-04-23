@@ -1,6 +1,8 @@
+import { string } from "zod";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { UserSchema, UserType } from "../schemas/User.schema";
 import { userService } from "../services/userService";
+import { hashPassword } from "../../lib/auth";
 
 export const authController = {
   // POST /auth/register
@@ -21,11 +23,28 @@ export const authController = {
 
       await userService.uniqueUser(userData.email);
 
-      const newUser = await userService.register(userData);
+      const newUser = userData;
 
-      return reply.status(201).send({ id: newUser.id });
+      newUser.password = await hashPassword(newUser.password);
+
+      console.log(newUser.password);
+
+      const registerUser = await userService.register(newUser);
+
+      return reply.status(201).send({ id: registerUser.id });
     } catch (error: any) {
       reply.code(500).send({ error: error.message });
     }
+  },
+
+  // POST /auth/login
+  login: async (request: FastifyRequest, reply: FastifyReply) => {
+    // const { email, password } = request.body;
+    //   try {
+    //     const user = await userService.uniqueUser(email);
+    //     if (!user) {
+    //       return reply.status(401).send({ message: "Not registered email." });
+    //     }
+    //   } catch (error) {}
   },
 };
